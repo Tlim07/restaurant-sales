@@ -1,4 +1,4 @@
-# restaurant-sales
+# Restaurant-Sales
 SQL code for orders placed by customers to restaurants in a food delivery app
 
 Case Study
