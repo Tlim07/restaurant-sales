@@ -47,103 +47,93 @@ RENAME COLUMN RestaurantName TO Restaurant_Name;
 
 #Check For Any Null Values
 SELECT  
-	Restaurant_ID,
+    Restaurant_ID,
     Order_Amount,
     Customer_Rating_Food,
     Customer_Rating_Delivery
 FROM 
-	Orders
+    Orders
 WHERE
-	Restaurant_ID IS NULL OR Order_Amount IS NULL OR Customer_Rating_Food IS NULL OR Customer_Rating_Delivery IS NULL;
+    Restaurant_ID IS NULL OR Order_Amount IS NULL OR Customer_Rating_Food IS NULL OR Customer_Rating_Delivery IS NULL;
 
 SELECT
-	Restaurant_ID,
+    Restaurant_ID,
     Restaurant_Name,
     Cuisine,
     Zone
 FROM
-	restaurants
+    restaurants
 WHERE
-	Restaurant_ID IS NULL OR Restaurant_Name IS NULL OR Cuisine IS NULL OR Zone IS NULL;
+    Restaurant_ID IS NULL OR Restaurant_Name IS NULL OR Cuisine IS NULL OR Zone IS NULL;
 
 #Data Exploration
 # Which customer spent the most money?
 SELECT
-	Customer_Name,
+    Customer_Name,
     Order_Amount
 FROM
-	Orders
+    Orders
 ORDER BY
-	Order_Amount DESC
+    Order_Amount DESC
 LIMIT 1;
     
 #Which restaurant made the least money?
 SELECT
-	Orders.Restaurant_ID,
-	SUM(Order_Amount),
+    Orders.Restaurant_ID,
+    SUM(Order_Amount),
     Restaurants.Restaurant_Name,
     Restaurants.Zone
 FROM
-	Orders
-		INNER JOIN
-	Restaurants ON Orders.Restaurant_ID = Restaurants.Restaurant_ID
+    Orders
+	INNER JOIN
+    Restaurants ON Orders.Restaurant_ID = Restaurants.Restaurant_ID
 GROUP BY
-	Restaurant_ID
+    Restaurant_ID
 ORDER BY
-	Order_Amount DESC;
+    SUM(Order_Amount) DESC;
 
-#Which Zone Made the most money?
+
+#Which zone made the most and least money?
 SELECT
-	Orders.Restaurant_ID,
-	SUM(Order_Amount),
+    SUM(Order_Amount),
     Restaurants.Zone
 FROM
-	Orders
-		INNER JOIN
-	Restaurants ON Orders.Restaurant_ID = Restaurants.Restaurant_ID
+    Orders
+	RIGHT JOIN
+    Restaurants ON Orders.Restaurant_ID = Restaurants.Restaurant_ID
 GROUP BY
-	Zone
+    Zone
 Order BY
-	Zone DESC;
-
-#Which Zone Made the least money?
-SELECT
-	Orders.Restaurant_ID,
-	SUM(Order_Amount),
-    Restaurants.Zone
-FROM
-	Orders
-		RIGHT JOIN
-	Restaurants ON Orders.Restaurant_ID = Restaurants.Restaurant_ID
-GROUP BY
-	Zone
-Order BY
-	Zone ASC;
+    SUM(Order_Amount) DESC;
 
 #Average customer food and delivery rating for each restaurant. Order in Descending 
 SELECT
-	Orders.Restaurant_ID,
+    Orders.Restaurant_ID,
     Restaurants.Restaurant_Name,
-	AVG(Customer_Rating_Food) AS 'Customer Food Rating',
-    AVG(Customer_Rating_Delivery) AS 'Customer Delivery Rating'
+    ROUND(AVG(Customer_Rating_Food), 2) AS 'Customer Food Rating',
+    ROUND(AVG(Customer_Rating_Delivery), 2) AS 'Customer Delivery Rating'
 FROM
-	Orders
-		LEFT JOIN
-	Restaurants ON Orders.Restaurant_ID = Restaurants.Restaurant_ID
+    Orders
+	LEFT JOIN
+    Restaurants ON Orders.Restaurant_ID = Restaurants.Restaurant_ID
 GROUP BY
-	Restaurant_ID
+    Restaurant_ID
 ORDER BY
-	Restaurant_ID DESC;
+    Restaurant_ID DESC;
 
-#Most liked Cuisine
+
+#Most liked and least liked cuisine?
 SELECT
-	ROUND(AVG(Customer_Rating_Food), 2) AS 'Customer Food Rating',
-    Restaurants.Cuisine
+    Restaurants.Cuisine,
+    SUM(Order_amount),
+    ROUND(AVG(Customer_Rating_Delivery), 2) AS 'Customer Delivery Rating',
+    ROUND(AVG(Customer_Rating_Food), 2) AS 'Customer Food Rating'
 FROM
-	Orders
-		LEFT JOIN
-	Restaurants ON Orders.Restaurant_ID = Restaurants.Restaurant_ID
+    Orders
+	INNER JOIN
+    Restaurants ON Orders.Restaurant_ID = Restaurants.Restaurant_ID
 GROUP BY
-	Cuisine
+    Cuisine
 ORDER BY
-	Cuisine ASC;
+    ROUND(AVG(Customer_Rating_Food), 2) DESC;
+
